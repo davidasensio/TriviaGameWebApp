@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20232 Web Programming - PRACTICE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div class="container js-app">
+
+        <div class="game js-game">
+            <nav>
+                <ul class="options js-options">
+                    <li><button class="btn js-new">New Game</button></li>
+                    <li><button class="btn js-cancel">Cancel</button></li>
+                </ul>
+            </nav>
+
+            <p class="points">Current score: <span class="js-points">X</span> points.</p>
+
+            <div class="question js-question">
+                <!-- Question HTML sample template -->
+                <h3 class="question__statement">This is a sample question statement with several possible answers as a list of options.</h3>
+                <ul class="question__answers">
+                    <li class="question__option" data-value="Answer A">Answer A</li>
+                    <li class="question__option" data-value="Answer B">Answer B</li>
+                    <li class="question__option" data-value="Answer C">Answer C</li>
+                    <li class="question__option" data-value="Answer D">Answer D</li>
+                </ul>
+                <!-- end Question HTML sample template -->
+            </div>
+
+            <div class="score js-score">
+                <input class="score__username js-username" type="text" name="username" id="username" placeholder="Your user name here...">
+                <button class="btn js-save">Save</button>
+                <button class="btn btn--ghost js-discard">Discard</button>
+            </div>
+        </div>
+
+        <div class="ranking js-ranking">
+            <h3 class="ranking__title">🏆 Ranking</h3>
+
+            <p class="ranking__message js-empty">This ranking is empty... <strong>Play the game and become the first!</strong></p>
+
+            <ul class="scoreboard js-list">
+                <!-- Ranking item HTML sample template -->
+                <li class="scoreboard__item">
+                    <p class="scoreboard__pos">1</p>
+                    <p class="scoreboard__name">Player 1</p>
+                    <p class="scoreboard__points">2 pts</p>
+                </li>
+                <!-- end Ranking item HTML sample template -->
+                <li class="scoreboard__item">
+                    <p class="scoreboard__pos">999</p>
+                    <p class="scoreboard__name">Player 2</p>
+                    <p class="scoreboard__points"> 1 pts</p>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>
