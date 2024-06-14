@@ -1,6 +1,6 @@
 /**
  * Practice - WebProgramming
- * @author David Asensio
+ * @author David Asensio - June 2024
  */
 
 import { CATEGORY_LIST } from "./modules/consts/category-list.js";

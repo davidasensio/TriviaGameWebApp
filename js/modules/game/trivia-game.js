@@ -1,3 +1,10 @@
+import { CATEGORY_LIST } from "../consts/category-list.js";
+
+const TRIVIA_URL = "https://opentdb.com/api.php?amount=1&difficulty=easy";
+const CATEGORY_URL = "https://opentdb.com/api_category.php";
+const TOKEN_URL = "https://opentdb.com/api_token.php?command=request";
+const CATEGORY_LIST_ID = [];
+
 class TriviaGame {
   #newGameButton;
   #cancelGameButton;
@@ -15,14 +22,11 @@ class TriviaGame {
   }
 
   #init() {
-    this.#reset();
     this.#newGameButton.addEventListener("click", this.#newGame.bind(this));
-    this.#cancelGameButton.addEventListener(
-      "click",
-      this.#cancelGame.bind(this)
-    );
+    this.#cancelGameButton.addEventListener("click", this.#cancelGame.bind(this));
 
     this.#reset();
+    this.#fetchCategories();
   }
 
   #reset() {
@@ -55,6 +59,23 @@ class TriviaGame {
       this.#cancelGameButton.classList.add("d-none");
     }
     this.#scoreInfo.innerHTML = this.#score;
+  }
+  /** Fetch API functions */
+
+  #fetchCategories() {
+    if (CATEGORY_LIST_ID.length == 0) {
+      fetch(CATEGORY_URL)
+        .then((response) => response.json())
+        .then((data) => {
+          const result = data.trivia_categories.map((item) => `${item.id} - ${item.name}`).join("\n");
+          for (const category of data.trivia_categories) {
+            if (CATEGORY_LIST.includes(category.name)) {
+              CATEGORY_LIST_ID.push(category.id);
+            }
+          }
+          alert("Fetched categories! ");
+        });
+    }
   }
 }
 
