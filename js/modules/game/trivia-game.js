@@ -5,7 +5,9 @@ import { Cookie } from "../utils/cookie.js";
 const TRIVIA_URL = "https://opentdb.com/api.php?amount=1&difficulty=easy";
 const CATEGORY_URL = "https://opentdb.com/api_category.php";
 const TOKEN_URL = "https://opentdb.com/api_token.php?command=request";
+
 let CATEGORY_LIST_ID = [];
+let API_SESSION_TOKEN = "";
 
 class TriviaGame {
   #newGameButton;
@@ -45,6 +47,7 @@ class TriviaGame {
   #init() {
     this.#setEventListeners();
     this.#fetchCategories();
+    this.#fetchSessionToken();
     this.#reset();
   }
 
@@ -84,6 +87,23 @@ class TriviaGame {
           CATEGORY_LIST_ID = Randomizer.randomizeArray(CATEGORY_LIST_ID);
           Cookie.setCookie("CATEGORY_LIST_ID", CATEGORY_LIST_ID.join("-"));
           console.log("Categories fetched and stored in a session cookie!");
+        });
+    }
+  }
+
+  #fetchSessionToken() {
+    const storedToken = Cookie.getCookie("API_SESSION_TOKEN");
+    API_SESSION_TOKEN = storedToken;
+
+    if (API_SESSION_TOKEN.length == 0) {
+      fetch(TOKEN_URL)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.response_code === 0) {
+            API_SESSION_TOKEN = data.token;
+            Cookie.setCookie("API_SESSION_TOKEN", API_SESSION_TOKEN);
+            console.log("API Session Token fetched and stored in a session cookie!");
+          }
         });
     }
   }
@@ -204,7 +224,7 @@ class TriviaGame {
       });
   }
 
-  #getTriviaURL = (category) => `${TRIVIA_URL}&category=${category}`;
+  #getTriviaURL = (category) => `${TRIVIA_URL}&category=${category}&token=${API_SESSION_TOKEN}`;
 
   #setVisible(element, isVisible) {
     if (isVisible) {

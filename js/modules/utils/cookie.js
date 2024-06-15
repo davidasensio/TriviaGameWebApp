@@ -2,7 +2,7 @@ class Cookie {
 
   static getCookie(name) {
     const cookies = document.cookie.split(";").map((cookie) => cookie.split("="));
-    const selectedCookie = cookies.find((cookie) => cookie[0] === name);
+    const selectedCookie = cookies.find((cookie) => cookie[0].trim() === name);
     return selectedCookie ? selectedCookie[1] : "";
   }
 
