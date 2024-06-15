@@ -1,10 +1,11 @@
 import { CATEGORY_LIST } from "../consts/category-list.js";
 import { Randomizer } from "../utils/randomizer.js";
+import { Cookie } from "../utils/cookie.js";
 
 const TRIVIA_URL = "https://opentdb.com/api.php?amount=1&difficulty=easy";
 const CATEGORY_URL = "https://opentdb.com/api_category.php";
 const TOKEN_URL = "https://opentdb.com/api_token.php?command=request";
-const CATEGORY_LIST_ID = [];
+let CATEGORY_LIST_ID = [];
 
 class TriviaGame {
   #newGameButton;
@@ -68,6 +69,9 @@ class TriviaGame {
   }
 
   #fetchCategories() {
+    const storedCategoryList = Cookie.getCookie("CATEGORY_LIST_ID");
+    CATEGORY_LIST_ID = storedCategoryList ? storedCategoryList.split("-") : [];
+
     if (CATEGORY_LIST_ID.length == 0) {
       fetch(CATEGORY_URL)
         .then((response) => response.json())
@@ -77,8 +81,9 @@ class TriviaGame {
               CATEGORY_LIST_ID.push(category.id);
             }
           }
-          Randomizer.randomizeArray(CATEGORY_LIST_ID);
-          console.log("Fetched categories! ");
+          CATEGORY_LIST_ID = Randomizer.randomizeArray(CATEGORY_LIST_ID);
+          Cookie.setCookie("CATEGORY_LIST_ID", CATEGORY_LIST_ID.join("-"));
+          console.log("Categories fetched and stored in a session cookie!");
         });
     }
   }
@@ -192,7 +197,7 @@ class TriviaGame {
           this.#setVisible(this.#questionList, false);
           this.#questionStatement.innerHTML = "Loading next question...";
         }
-        console.log("Fetched question! ");
+        console.log("Fetched question!");
       })
       .catch((error) => {
         console.log("There was an error: ", error);
