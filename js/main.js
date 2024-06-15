@@ -12,7 +12,7 @@ const questionStatement = document.querySelector(".question__statement");
 const questionAnswers = document.querySelector(".question__answers");
 const formRankingPanel = document.querySelector(".score");
 
-new TriviaGame(
+const triviaGame = new TriviaGame(
   newGameButton,
   cancelGameButton,
   scoreInfo,
@@ -21,3 +21,16 @@ new TriviaGame(
   questionAnswers,
   formRankingPanel
 );
+
+const form = document.forms["form_ranking_data"];
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const formData = new FormData(form);
+  const name = formData.get("username");
+  console.log(name);
+  // TODO: Implement the logic to store the player's name and score in the ranking
+});
+
+form.addEventListener("reset", (event) => {
+  triviaGame.cancelGame();
+});

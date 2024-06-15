@@ -41,9 +41,11 @@
             </div>
 
             <div class="score js-score">
-                <input class="score__username js-username" type="text" name="username" id="username" placeholder="Your user name here...">
-                <button class="btn js-save">Save</button>
-                <button class="btn btn--ghost js-discard">Discard</button>
+                <form name="form_ranking_data">
+                    <input class="score__username js-username" type="text" name="username" id="username" placeholder="Your user name here..." required>
+                    <button class="btn js-save" type="submit">Save</button>
+                    <button class="btn btn--ghost js-discard" type="reset">Discard</button>
+                </form>
             </div>
         </div>
 

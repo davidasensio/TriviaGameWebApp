@@ -123,12 +123,12 @@ class TriviaGame {
   }
 
   #newGame() {
-    this.#reset();
-    this.#started = true;
-    this.#render();
     if (CATEGORY_LIST_ID.length == 0) {
       this.#fetchCategories();
     }
+    this.#reset();
+    this.#started = true;
+    this.#render();
     this.#askQuestion();
   }
 
@@ -192,6 +192,7 @@ class TriviaGame {
   }
 
   #fetchQuestion(category) {
+    this.#showLoadingQuestion();
     fetch(this.#getTriviaURL(category))
       .then((response) => {
         if (response.status === 429) {
@@ -214,14 +215,18 @@ class TriviaGame {
           this.#updateQuestion(questionStatement, questionType, correctAnswer, incorrectAnswers);
           this.#questionIndex++;
         } else {
-          this.#setVisible(this.#questionList, false);
-          this.#questionStatement.innerHTML = "Loading next question...";
+          this.#showLoadingQuestion();
         }
         console.log("Fetched question!");
       })
       .catch((error) => {
         console.log("There was an error: ", error);
       });
+  }
+
+  #showLoadingQuestion() {
+    this.#setVisible(this.#questionList, false);
+    this.#questionStatement.innerHTML = "Loading next question...";
   }
 
   #getTriviaURL = (category) => `${TRIVIA_URL}&category=${category}&token=${API_SESSION_TOKEN}`;
