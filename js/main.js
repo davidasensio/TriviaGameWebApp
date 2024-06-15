@@ -1,9 +1,14 @@
 /**
  * Practice - WebProgramming
  * @author David Asensio - June 2024
+ * 
+ * I also have published the practice temporary to a GitHub repository, just in case anyone wants to try it.
+ * @see https://davidasensio.github.io/TriviaGameWebApp
  */
-import { TriviaGame } from "./modules/game/trivia-game.js";
+import { TriviaGame } from "./modules/feature/game/trivia-game.js";
+import { Ranking } from "./modules/feature/ranking/ranking.js";
 
+// Trivia Game
 const newGameButton = document.querySelector(".js-new");
 const cancelGameButton = document.querySelector(".js-cancel");
 const scoreInfo = document.querySelector(".js-points");
@@ -22,15 +27,24 @@ const triviaGame = new TriviaGame(
   formRankingPanel
 );
 
+// Ranking
+const rankingEmptyMessage = document.querySelector(".ranking__message");
+const rankingPlayerList = document.querySelector(".scoreboard");
+
+const ranking = new Ranking(rankingEmptyMessage, rankingPlayerList);
+
+// Form Ranking
 const form = document.forms["form_ranking_data"];
 form.addEventListener("submit", (event) => {
-  event.preventDefault();
   const formData = new FormData(form);
-  const name = formData.get("username");
-  console.log(name);
-  // TODO: Implement the logic to store the player's name and score in the ranking
+  const userName = formData.get("username");
+  const userRankingScore = triviaGame.getScore();
+
+  event.preventDefault();
+  ranking.addToRanking(userName, userRankingScore);
+  triviaGame.endGame();
 });
 
 form.addEventListener("reset", (event) => {
-  triviaGame.cancelGame();
+  triviaGame.endGame();
 });

@@ -1,6 +1,6 @@
-import { CATEGORY_LIST } from "../consts/category-list.js";
-import { Randomizer } from "../utils/randomizer.js";
-import { Cookie } from "../utils/cookie.js";
+import { CATEGORY_LIST } from "../../consts/category-list.js";
+import { Randomizer } from "../../utils/randomizer.js";
+import { Cookie } from "../../utils/cookie.js";
 
 const TRIVIA_URL = "https://opentdb.com/api.php?amount=1&difficulty=easy";
 const CATEGORY_URL = "https://opentdb.com/api_category.php";
@@ -244,9 +244,13 @@ class TriviaGame {
   startGame() {
     this.#newGame();
   }
-
-  cancelGame() {
+  
+  endGame() { 
     this.#cancelGame();
+  }
+
+  getScore() {
+    return this.#score;
   }
 }
 
