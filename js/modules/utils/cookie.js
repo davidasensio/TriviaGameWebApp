@@ -6,12 +6,16 @@ class Cookie {
     return selectedCookie ? selectedCookie[1] : "";
   }
 
-  static setCookie(name, value, days = 0) { // 0 means session cookie
+  static setCookie(name, value, mins = 0) { // 0 means session cookie
     let expiryDate = "";
-    if (days > 0) {
-      expiryDate = `expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}`;
+    if (mins > 0) {
+      expiryDate = `expires=${new Date(Date.now() + mins * 60 * 1000).toUTCString()}`;
     }
     document.cookie = `${name}=${value}; ${expiryDate};`;
+  }
+
+  static deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
   }
 }
 export { Cookie };

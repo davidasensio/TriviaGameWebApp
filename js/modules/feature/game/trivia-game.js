@@ -101,7 +101,7 @@ class TriviaGame {
         .then((data) => {
           if (data.response_code === 0) {
             API_SESSION_TOKEN = data.token;
-            Cookie.setCookie("API_SESSION_TOKEN", API_SESSION_TOKEN);
+            Cookie.setCookie("API_SESSION_TOKEN", API_SESSION_TOKEN, 5);
             console.log("API Session Token fetched and stored in a session cookie!");
           }
         });
@@ -112,11 +112,11 @@ class TriviaGame {
     this.#setVisible(this.#newGameButton, !this.#started);
     this.#setVisible(this.#cancelGameButton, this.#started);
     this.#setVisible(this.#questionPanel, this.#started);
-    this.#setVisible(this.#questionList, !this.#gameOver);
     this.#setVisible(this.#formRankingPanel, this.#gameOver);
-
+    
     if (this.#gameOver) {
       this.#questionStatement.innerHTML = "Do you want to save your score in the Ranking?";
+      this.#setVisible(this.#questionList, false);
     }
 
     this.#scoreInfo.innerHTML = this.#score;
@@ -138,9 +138,12 @@ class TriviaGame {
     this.#render();
   }
 
-  #askQuestion() {
+  #askQuestion(waitSecs = 0) {
     const category = CATEGORY_LIST_ID[this.#questionIndex];
-    this.#fetchQuestion(category);
+    this.#showLoadingQuestion();
+    setTimeout(() => {
+      this.#fetchQuestion(category);
+    }, waitSecs * 1000);
   }
 
   #updateQuestion(questionStatement, questionType, correctAnswer, incorrectAnswers) {
@@ -184,22 +187,29 @@ class TriviaGame {
     }
     this.#currentCorrectAnswer = "";
     if (this.#questionIndex < CATEGORY_LIST_ID.length) {
-      this.#askQuestion();
+      this.#askQuestion(5);
     } else {
       this.#gameOver = true;
     }
     this.#render();
   }
 
+  /**
+   * Fetches a question from the API.
+   *
+   * Possible response codes:
+   * Code 0: Success Returned results successfully.
+   * Code 1: No Results Could not return results. The API doesn't have enough questions for your query. (Ex. Asking for 50 Questions in a Category that only has 20.)
+   * Code 2: Invalid Parameter Contains an invalid parameter. Arguements passed in aren't valid. (Ex. Amount = Five)
+   * Code 4: Token Empty Session Token has returned all possible questions for the specified query. Resetting the Token is necessary.
+   * Code 5: Rate Limit Too many requests have occurred. Each IP can only access the API once every 5 seconds.
+   */
   #fetchQuestion(category) {
     this.#showLoadingQuestion();
     fetch(this.#getTriviaURL(category))
       .then((response) => {
         if (response.status === 429) {
-          console.log("Too many requests. Waiting 3 seconds...");
-          setTimeout(() => {
-            this.#fetchQuestion(category);
-          }, 3000);
+          this.retryFetchQuestion(category);
         } else {
           return response.json();
         }
@@ -214,14 +224,27 @@ class TriviaGame {
           this.#setVisible(this.#questionList, true);
           this.#updateQuestion(questionStatement, questionType, correctAnswer, incorrectAnswers);
           this.#questionIndex++;
+          console.log("Fetched question!");
+        } else if (data && data.response_code === 3) {
+          // No valid token, fetch a new one
+          Cookie.deleteCookie("API_SESSION_TOKEN");
+          this.#fetchSessionToken();
+          this.retryFetchQuestion(category);
+          console.log("No valid token, fetching a new one...");
         } else {
           this.#showLoadingQuestion();
         }
-        console.log("Fetched question!");
       })
       .catch((error) => {
         console.log("There was an error: ", error);
       });
+  }
+
+  retryFetchQuestion(category) {
+    console.log("Too many requests. Retrying in 3 seconds...");
+    setTimeout(() => {
+      this.#fetchQuestion(category);
+    }, 3000);
   }
 
   #showLoadingQuestion() {
@@ -244,8 +267,8 @@ class TriviaGame {
   startGame() {
     this.#newGame();
   }
-  
-  endGame() { 
+
+  endGame() {
     this.#cancelGame();
   }
 
